@@ -24,6 +24,6 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Ricardo Rey-Sáez \email{ricardoreysaez95@gmail.com} (\href{https://orcid.org/0000-0001-6739-2035}{ORCID})
+\strong{Maintainer}: Ricardo Rey-Sáez \email{ricardoreysaez95@gmail.com} (\href{https://orcid.org/0000-0001-6739-2035}{ORCID}) [copyright holder]
 
 }

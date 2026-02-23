@@ -289,7 +289,7 @@ setup_integration_data <- function() {
   Sigma_true <- Lambda_true %*% t(Lambda_true) + Psi_true
 
   # Generate multivariate normal data
-  data <- MASS::mvrnorm(n = n, mu = rep(0, J), Sigma = Sigma_true)
+  data <- mvnfast::rmvn(n = n, mu = rep(0, J), sigma = Sigma_true)
   colnames(data) <- paste0("V", 1:J)
 
   list(
@@ -672,7 +672,7 @@ test_that("befa runs successfully on all valid parameter combinations", {
   Sigma_true <- Lambda_true %*% t(Lambda_true) + Psi_true
 
   # Complete data
-  data_complete <- MASS::mvrnorm(n = N, mu = rep(0, J), Sigma = Sigma_true)
+  data_complete <- mvnfast::rmvn(n = N, mu = rep(0, J), sigma = Sigma_true)
   colnames(data_complete) <- paste0("V", 1:J)
 
   # Data with missing values for FIML tests (~15% missing)
