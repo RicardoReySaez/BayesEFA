@@ -35,6 +35,7 @@ SystemRequirements: GNU make
 Suggests: 
     cmdstanr (>= 0.9.0),
     knitr,
+    MASS,
     rmarkdown,
     testthat (>= 3.0.0),
     withr

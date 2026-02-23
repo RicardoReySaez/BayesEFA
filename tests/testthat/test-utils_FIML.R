@@ -16,8 +16,17 @@ test_that("compute_fiml_loglik matches mvnfast with complete data", {
 
   Y <- mvnfast::rmvn(N, mu = Mu, sigma = Sigma)
 
+  # Build pre-split data_fiml list (all complete, no missing)
+  comp_idx <- seq_len(N)
+  data_fiml <- list(
+    comp_idx = comp_idx,
+    miss_idx = integer(0),
+    Y_comp   = Y,
+    Y_miss   = Y[integer(0), , drop = FALSE]
+  )
+
   # FIML result
-  ll_fiml <- compute_fiml_loglik(Y, mu = Mu, Sigma = Sigma)
+  ll_fiml <- compute_fiml_loglik(data_fiml, mu = Mu, Sigma = Sigma)
 
   # Direct mvnfast result
   ll_direct <- mvnfast::dmvn(Y, mu = Mu, sigma = Sigma, log = TRUE)
@@ -35,7 +44,15 @@ test_that("compute_fiml_loglik handles NAs by marginalization", {
   # Single observation with one NA
   Y <- matrix(c(1.0, NA, 0.5), nrow = 1)
 
-  ll_fiml <- compute_fiml_loglik(Y, mu = Mu, Sigma = Sigma)
+  # Build pre-split data_fiml list (all incomplete)
+  data_fiml <- list(
+    comp_idx = integer(0),
+    miss_idx = 1L,
+    Y_comp   = Y[integer(0), , drop = FALSE],
+    Y_miss   = Y
+  )
+
+  ll_fiml <- compute_fiml_loglik(data_fiml, mu = Mu, Sigma = Sigma)
 
   # Manual: marginal N(0,1) for observed elements only
   ll_expected <- sum(dnorm(c(1.0, 0.5), mean = 0, sd = 1, log = TRUE))
@@ -49,7 +66,15 @@ test_that("compute_fiml_loglik returns 0 for fully missing row", {
   Mu <- c(0, 0, 0)
   Sigma <- diag(1, 3)
 
-  ll <- compute_fiml_loglik(Y, mu = Mu, Sigma = Sigma)
+  # Build pre-split data_fiml list (all incomplete)
+  data_fiml <- list(
+    comp_idx = integer(0),
+    miss_idx = 1L,
+    Y_comp   = Y[integer(0), , drop = FALSE],
+    Y_miss   = Y
+  )
+
+  ll <- compute_fiml_loglik(data_fiml, mu = Mu, Sigma = Sigma)
   expect_equal(ll[1], 0)
 })
 
