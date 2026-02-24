@@ -91,13 +91,13 @@ when \code{compute_fit_indices = TRUE}. Common arguments include:
 \itemize{
 \item \code{xi}: Repulsion parameter (unit_vector prior). Default: \code{100}. \strong{Not recommended to
 be modified by the user}.
-\item \code{nu}: c(mean, sd) for intercepts (raw model). Default: \code{c(0, 10)} → N(0, 10).
-\item \code{sigma}: c(df, loc, scale) for residual SDs (cov/raw models). Default: \code{c(3, 0, 2.5)} → half-t(3, 0, 2.5).
-\item \code{h2}: c(alpha, beta) for communalities (unit_vector prior). Default: \code{c(1, 1)} → Beta(1, 1).
+\item \code{nu}: c(mean, sd) for intercepts (raw model). Default: \code{c(0, 10)} -> N(0, 10).
+\item \code{sigma}: c(df, loc, scale) for residual SDs (cov/raw models). Default: \code{c(3, 0, 2.5)} -> half-t(3, 0, 2.5).
+\item \code{h2}: c(alpha, beta) for communalities (unit_vector prior). Default: \code{c(1, 1)} -> Beta(1, 1).
 Using this default setting implies a \strong{uniform joint distribution over the factor loadings} when \code{lambda_prior = "unit_vector"}.
-\item \code{lambda}: c(mean, sd) for loadings (normal prior). Default: \code{c(0, 1)} → N(0, 1).
-For the unidimensional model, c(alpha, beta) → Beta(1, 1).
-\item \code{psi}: c(alpha, beta) for uniquenesses (normal prior). Default: \code{c(0.5, 0.5)} → InvGamma(0.5, 0.5).
+\item \code{lambda}: c(mean, sd) for loadings (normal prior). Default: \code{c(0, 1)} -> N(0, 1).
+For the unidimensional model, c(alpha, beta) -> Beta(1, 1).
+\item \code{psi}: c(alpha, beta) for uniquenesses (normal prior). Default: \code{c(0.5, 0.5)} -> InvGamma(0.5, 0.5).
 }}
 
 \item{compute_fit_indices}{Logical. If TRUE (default), computes Bayesian fit indices after estimation.}
@@ -134,7 +134,7 @@ to resolve the rotational indeterminacy inherent to factor models.
 
 The function estimates a linear factor model where each observed vector \eqn{\mathbf{y}_i}
 is decomposed as:
-\deqn{\large \mathbf{y}_i = \boldsymbol{\nu} + \mathbf{\Lambda} \cdot \boldsymbol{\eta}_i + \boldsymbol{\epsilon}_i}
+\deqn{\mathbf{y}_i = \boldsymbol{\nu} + \mathbf{\Lambda} \cdot \boldsymbol{\eta}_i + \boldsymbol{\epsilon}_i}
 
 where:
 \itemize{
@@ -149,7 +149,7 @@ the idiosyncratic residuals (uniquenesses), with \eqn{\mathbf{\Psi}} being a dia
 
 Under the assumption of no missing data (or using listwise deletion), the marginal
 distribution of the observed data is:
-\deqn{\large \mathbf{y}_i \mid \boldsymbol{\nu}, \mathbf{\Lambda}, \mathbf{\Psi} \sim \mathcal{MVN}(\boldsymbol{\nu}, \mathbf{\Sigma})}
+\deqn{\mathbf{y}_i \mid \boldsymbol{\nu}, \mathbf{\Lambda}, \mathbf{\Psi} \sim \mathcal{MVN}(\boldsymbol{\nu}, \mathbf{\Sigma})}
 
 where \eqn{\mathbf{\Sigma} = \mathbf{\Lambda}\cdot\mathbf{\Lambda}^\top + \mathbf{\Psi}}
 is the model-implied covariance matrix.
@@ -164,7 +164,7 @@ This parameterization assumes the observed data are standardized; thus, the
 intercept vector \eqn{\boldsymbol{\nu}} is not estimated. The model-implied
 covariance matrix \eqn{\mathbf{\Sigma}} simplifies to the model-implied
 correlation matrix \eqn{\mathbf{R}}, decomposed as:
-\deqn{\large \mathbf{R} = \mathbf{\Lambda} \cdot \mathbf{\Lambda}^\top + \mathbf{\Psi}}
+\deqn{\mathbf{R} = \mathbf{\Lambda} \cdot \mathbf{\Lambda}^\top + \mathbf{\Psi}}
 where \eqn{\mathbf{\Lambda}} contains the standardized factor loadings and
 \eqn{\mathbf{\Psi}} represents the proportion of unique variance (uniquenesses).
 Since the elements of \eqn{\mathbf{\Lambda}} are constrained to the range
@@ -179,14 +179,14 @@ vector \eqn{\boldsymbol{\nu}} is zero. It can be implemented in two ways:
 \item \emph{Standardized Structure with Scale}: When using \code{lambda_prior = "unit_vector"},
 the model introduces a vector of marginal standard deviations \eqn{\boldsymbol{\sigma}}.
 The covariance matrix is reconstructed by scaling the standardized structure:
-\deqn{\large \mathbf{\Sigma} = \mathbf{D}_{\sigma} \cdot (\mathbf{\Lambda} \cdot \mathbf{\Lambda}^\top + \mathbf{\Psi}) \cdot \mathbf{D}_{\sigma}}
+\deqn{\mathbf{\Sigma} = \mathbf{D}_{\sigma} \cdot (\mathbf{\Lambda} \cdot \mathbf{\Lambda}^\top + \mathbf{\Psi}) \cdot \mathbf{D}_{\sigma}}
 where \eqn{\mathbf{D}_{\sigma} = \text{diag}(\boldsymbol{\sigma})} and
 \eqn{\mathbf{\Lambda}} remains in the correlation metric.
 \item \emph{Unstandardized (Metric) Structure}: When using \code{lambda_prior = "normal"},
 the loadings are estimated directly in the scale of the observed variables.
 The scale is embedded within \eqn{\mathbf{\Lambda}}, and the covariance
 matrix follows the classical fundamental equation:
-\deqn{\large \mathbf{\Sigma} = \mathbf{\Lambda} \cdot \mathbf{\Lambda}^\top + \mathbf{\Psi}}
+\deqn{\mathbf{\Sigma} = \mathbf{\Lambda} \cdot \mathbf{\Lambda}^\top + \mathbf{\Psi}}
 where \eqn{\mathbf{\Psi}} represents uniquenesses in the original variance scale.
 }
 \item \strong{Full Unstandardized Model} (\code{model = "raw"}):
@@ -283,22 +283,22 @@ extract_posterior_draws(befa_fit, pars = "Lambda", format = "matrix")
 extract_posterior_draws(befa_fit, pars = "Lambda", format = "rvars")
 
 # # A draws_rvars: 1000 iterations, 4 chains, and 1 variables
-# $Lambda: rvar<1000,4>[9,3] mean ± sd:
+# $Lambda: rvar<1000,4>[9,3] mean +/- sd:
 #       [,1]            [,2]            [,3]
-#  [1,]  0.595 ± 0.062   0.313 ± 0.047   0.123 ± 0.060
-#  [2,]  0.460 ± 0.062   0.129 ± 0.054  -0.039 ± 0.066
-#  [3,]  0.647 ± 0.062   0.076 ± 0.048   0.109 ± 0.053
-#  [4,]  0.109 ± 0.038   0.833 ± 0.024   0.072 ± 0.041
-#  [5,]  0.029 ± 0.035   0.862 ± 0.024   0.066 ± 0.038
-#  [6,]  0.156 ± 0.039   0.810 ± 0.025   0.063 ± 0.040
-#  [7,] -0.054 ± 0.051   0.098 ± 0.048   0.682 ± 0.074
-#  [8,]  0.171 ± 0.065   0.073 ± 0.047   0.693 ± 0.072
-#  [9,]  0.400 ± 0.070   0.164 ± 0.049   0.493 ± 0.066
+#  [1,]  0.595 +/- 0.062   0.313 +/- 0.047   0.123 +/- 0.060
+#  [2,]  0.460 +/- 0.062   0.129 +/- 0.054  -0.039 +/- 0.066
+#  [3,]  0.647 +/- 0.062   0.076 +/- 0.048   0.109 +/- 0.053
+#  [4,]  0.109 +/- 0.038   0.833 +/- 0.024   0.072 +/- 0.041
+#  [5,]  0.029 +/- 0.035   0.862 +/- 0.024   0.066 +/- 0.038
+#  [6,]  0.156 +/- 0.039   0.810 +/- 0.025   0.063 +/- 0.040
+#  [7,] -0.054 +/- 0.051   0.098 +/- 0.048   0.682 +/- 0.074
+#  [8,]  0.171 +/- 0.065   0.073 +/- 0.047   0.693 +/- 0.072
+#  [9,]  0.400 +/- 0.070   0.164 +/- 0.049   0.493 +/- 0.066
 
 # Full posterior summaries
 posterior_summaries(befa_fit, pars = "h2")
 
-# # A tibble: 9 × 10
+# # A tibble: 9 x 10
 #   variable  mean median     sd    mad    q5   q95  rhat ess_bulk ess_tail
 #   <chr>    <dbl>  <dbl>  <dbl>  <dbl> <dbl> <dbl> <dbl>    <dbl>    <dbl>
 # 1 h2[1]    0.477  0.476 0.0629 0.0634 0.373 0.581 1.00     5833.    2769.
@@ -315,9 +315,9 @@ posterior_summaries(befa_fit, pars = "h2")
 summary(befa_fit, cutoff = 0.1, signif_stars = TRUE)
 
 # Table 1. Factor Loadings (Pattern Matrix)
-# ‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗
+# =======================================================================
 # Variable       F1     F2     F3    h2    u2  Rhat  EssBulk  EssTail
-# ———————————————————————————————————————————————————————————————————
+# -------------------------------------------------------------------
 # Item_1      0.60*  0.31*  0.12*  0.47  0.53  1.00     4081     3307
 # Item_2      0.46*  0.13*         0.23  0.77  1.00     4127     2864
 # Item_3      0.65*         0.11*  0.44  0.56  1.00     4178     2513
@@ -327,18 +327,18 @@ summary(befa_fit, cutoff = 0.1, signif_stars = TRUE)
 # Item_7                    0.68*  0.48  0.52  1.00     3685     2493
 # Item_8      0.17*         0.69*  0.51  0.49  1.00     3738     2597
 # Item_9      0.40*  0.16*  0.49*  0.43  0.57  1.00     4051     3253
-# ‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗
+# =======================================================================
 # Note: varimax rotation applied. Diagnostics show worst-case values
 # across factors (max Rhat, min ESS). The 3 latent factors accounted
 # for 52.2\% of total variance. (*) 95\% Credible Interval excludes 0.
 # Loadings with absolute values < 0.10 are hidden.
 #
 # Table 2. Bayesian Fit Measures
-# ‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗
+# =================================================
 # Index         Estimate     SD    CI_Low   CI_High
-# —————————————————————————————————————————————————
+# -------------------------------------------------
 # Chi2             47.12   6.98     35.37     62.56
-# Chi2_ppp          0.12
+# Chi2_ppp          0.11
 # Chi2_Null       918.85   0.00    918.85    918.85
 # BRMSEA            0.05   0.02      0.00      0.09
 # BGamma            0.99   0.00      0.98      1.00
@@ -350,19 +350,19 @@ summary(befa_fit, cutoff = 0.1, signif_stars = TRUE)
 # ELPD          -3416.31  42.49  -3499.60  -3333.02
 # LOOIC          6832.62  84.99   6666.05   6999.20
 # p_loo            24.97   1.78     21.48     28.46
-# ‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗
+# =================================================
 # Note: Intervals are 95\% Credible Intervals. PPP:
 # Posterior Predictive p-value (Ideal > .05).
 # p_loo/LOOIC derived from PSIS-LOO.
 #
 # Table 3. Factor Reliability (Coefficient Omega)
-# ‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗
+# =========================================
 # Factor    Estimate    SD  CI_Low  CI_High
-# —————————————————————————————————————————
+# -----------------------------------------
 # F1            0.60  0.04    0.52     0.67
 # F2            0.73  0.02    0.69     0.76
 # F3            0.55  0.04    0.45     0.62
-# ‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗
+# =========================================
 # Full Scale Omega Total: 0.84 [0.82,
 # 0.86]. Omega coefficients use the full
 # posterior distribution.

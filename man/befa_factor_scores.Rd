@@ -31,7 +31,7 @@ and the estimated model parameters.
 
 Consistent with the data generation process of the factor model, the observation
 for the \eqn{i}-th individual is defined as:
-\deqn{\large \mathbf{y}_i = \boldsymbol{\nu} + \mathbf{\Lambda} \cdot \boldsymbol{\eta}_i + \boldsymbol{\epsilon}_i}
+\deqn{\mathbf{y}_i = \boldsymbol{\nu} + \mathbf{\Lambda} \cdot \boldsymbol{\eta}_i + \boldsymbol{\epsilon}_i}
 
 where \eqn{\boldsymbol{\eta}_i \sim \mathcal{N}(\mathbf{0}, \mathbf{I}_M)} and
 \eqn{\boldsymbol{\epsilon}_i \sim \mathcal{N}(\mathbf{0}, \mathbf{\Psi})}.
@@ -39,11 +39,11 @@ where \eqn{\boldsymbol{\eta}_i \sim \mathcal{N}(\mathbf{0}, \mathbf{I}_M)} and
 Because the posterior distributions of the model parameters are available from
 the MCMC draws, the factor scores can be derived analytically for each iteration.
 The conditional posterior distribution of the latent factors given the observed data is:
-\deqn{\large \boldsymbol{\eta}_i \mid \mathbf{y}_i, \mathbf{\Lambda}, \mathbf{\Psi}, \boldsymbol{\nu} \sim \mathcal{N}(\boldsymbol{\mu}_{\eta \mid y}, \mathbf{\Sigma}_{\eta \mid y})}
+\deqn{\boldsymbol{\eta}_i \mid \mathbf{y}_i, \mathbf{\Lambda}, \mathbf{\Psi}, \boldsymbol{\nu} \sim \mathcal{N}(\boldsymbol{\mu}_{\eta \mid y}, \mathbf{\Sigma}_{\eta \mid y})}
 
 with the conditional covariance matrix and mean vector defined as:
-\deqn{\large \mathbf{\Sigma}_{\eta \mid y} = (\mathbf{I}_M + \mathbf{\Lambda}^\top \cdot \mathbf{\Psi}^{-1} \cdot \mathbf{\Lambda})^{-1}}
-\deqn{\large \boldsymbol{\mu}_{\eta \mid y} = \mathbf{\Sigma}_{\eta \mid y} \cdot \mathbf{\Lambda}^\top \cdot \mathbf{\Psi}^{-1} \cdot (\mathbf{y}_i - \boldsymbol{\nu})}
+\deqn{\mathbf{\Sigma}_{\eta \mid y} = (\mathbf{I}_M + \mathbf{\Lambda}^\top \cdot \mathbf{\Psi}^{-1} \cdot \mathbf{\Lambda})^{-1}}
+\deqn{\boldsymbol{\mu}_{\eta \mid y} = \mathbf{\Sigma}_{\eta \mid y} \cdot \mathbf{\Lambda}^\top \cdot \mathbf{\Psi}^{-1} \cdot (\mathbf{y}_i - \boldsymbol{\nu})}
 
 \strong{Handling of Missing Data}
 
@@ -55,9 +55,9 @@ indices of the observed variables, denoted as \eqn{o_i}.
 }
 \examples{
 \dontrun{
-# ─────────────────────────────────────────────────────── #
+# ------------------------------------------------------- #
 #    1. Factor scores after fitting Bayesian EFA model    #
-# ─────────────────────────────────────────────────────── #
+# ------------------------------------------------------- #
 
 # Fit Bayesian EFA model to the famous Grant-White School Data (Holzinger y Swineford , 1939)
 befa_fit <- befa(
@@ -106,10 +106,10 @@ plot(Bayes_fsc_pmean[, 3], efa_fit$scores[, 3],
 abline(a = 0, b = 1, col = "firebrick4", lwd = 2)
 par(mfrow = c(1, 1))
 
-# ─────────────────────────────────────────────────────────────────────────────
-# ────────────────────────────────────────────────────── #
+# -----------------------------------------------------------------------------
+# ------------------------------------------------------ #
 #    2. Factor scores when fitting Bayesian EFA model    #
-# ────────────────────────────────────────────────────── #
+# ------------------------------------------------------ #
 # Fit Bayesian model with Factor Scores = TRUE
 befa_fit <- befa(
   data = HS_data,
@@ -141,7 +141,7 @@ extract_posterior_draws(befa_fit, pars = "eta")
 
 posterior_summaries(befa_fit, pars = "eta")
 
-# # A tibble: 903 × 10
+# # A tibble: 903 x 10
 #    variable    mean median    sd   mad     q5    q95  rhat ess_bulk ess_tail
 #    <chr>      <dbl>  <dbl> <dbl> <dbl>  <dbl>  <dbl> <dbl>    <dbl>    <dbl>
 #  1 eta[1,1]  -0.750 -0.750 0.633 0.635 -1.79   0.281 1.00     3978.    3997.
@@ -154,8 +154,8 @@ posterior_summaries(befa_fit, pars = "eta")
 #  8 eta[8,1]  -0.117 -0.116 0.597 0.595 -1.09   0.869 1.00     3864.    3774.
 #  9 eta[9,1]  -0.283 -0.273 0.613 0.611 -1.31   0.696 1.000    4115.    4014.
 # 10 eta[10,1] -1.34  -1.34  0.587 0.572 -2.30  -0.359 1.00     4112.    3936.
-# # ℹ 893 more rows
-# # ℹ Use `print(n = ...)` to see more rows
+# # # 893 more rows
+# # # Use `print(n = ...)` to see more rows
 
 # You can store posterior means easely because Stan always use column-major order
 Bayes_fsc <- matrix(
@@ -164,7 +164,7 @@ Bayes_fsc <- matrix(
   ncol = 3
 )
 
-# ─────────────────────────────────────────────────────────────────────────────
+# -----------------------------------------------------------------------------
 }
 
 }

@@ -38,13 +38,13 @@
 #' observed data. The function computes the following indices at each draw \eqn{i}:
 #'
 #' * **BRMSEA** (Bayesian Root Mean Square Error of Approximation):
-#'   \deqn{\large \text{BRMSEA}_i = \sqrt{\max [0, (D_i^{obs} - p^*) / (df_B \cdot N)]}}
+#'   \deqn{\text{BRMSEA}_i = \sqrt{\max [0, (D_i^{obs} - p^*) / (df_B \cdot N)]}}
 #' * **BGamma** (\eqn{\hat{\Gamma}}) and **Adjusted BGamma** (\eqn{\hat{\Gamma}_{adj}}):
 #'   Bayesian analogs of the GFI.
-#'   \deqn{\large \hat{\Gamma}_i = J / [J + (2 / N) \cdot (D_i^{obs} - p^*)]}
-#'   \deqn{\large \hat{\Gamma}_{adj,i} = 1 - (p^* / df_B) \cdot (1 - \hat{\Gamma}_i)}
+#'   \deqn{\hat{\Gamma}_i = J / [J + (2 / N) \cdot (D_i^{obs} - p^*)]}
+#'   \deqn{\hat{\Gamma}_{adj,i} = 1 - (p^* / df_B) \cdot (1 - \hat{\Gamma}_i)}
 #' * **BMc** (Bayesian McDonald's Centrality Index):
-#'   \deqn{\large \text{BMc}_i = \exp [-(1 / (2 \cdot N)) \cdot (D_i^{obs} - p^*)]}
+#'   \deqn{\text{BMc}_i = \exp [-(1 / (2 \cdot N)) \cdot (D_i^{obs} - p^*)]}
 #' * **Chi2_ppp** (Posterior Predictive P-value): The proportion of MCMC iterations
 #'   where the deviance of replicated data exceeds the observed deviance
 #'   \eqn{P(D^{rep} \geq D^{obs})}. Values closer to 0.50 indicate excellent fit,
@@ -60,9 +60,9 @@
 #' under the hood using the same Stan settings, which may increase computation time.*
 #'
 #' * **BCFI** (Bayesian Comparative Fit Index):
-#'   \deqn{\large \text{BCFI}_i = 1 - [(D_{H,i}^{obs} - p^*) / (D_{0,i}^{obs} - p^*)]}
+#'   \deqn{\text{BCFI}_i = 1 - [(D_{H,i}^{obs} - p^*) / (D_{0,i}^{obs} - p^*)]}
 #' * **BTLI** (Bayesian Tucker-Lewis Index / Non-Normed Fit Index):
-#'   \deqn{\large \text{BTLI}_i = [ (D_{0,i}^{obs} - p^*) / df_{B0} - (D_{H,i}^{obs} - p^*) / df_{BH} ] / [ (D_{0,i}^{obs} - p^*) / df_{B0} - 1 ]}
+#'   \deqn{\text{BTLI}_i = [ (D_{0,i}^{obs} - p^*) / df_{B0} - (D_{H,i}^{obs} - p^*) / df_{BH} ] / [ (D_{0,i}^{obs} - p^*) / df_{B0} - 1 ]}
 #'
 #' *(Note: Both BCFI and BTLI are strictly bounded to the \eqn{[0, 1]} interval in the final output).*
 #'
@@ -89,17 +89,17 @@
 #' @references
 #' Garnier-Villarreal, M., & Jorgensen, T. D. (2020). Adapting Fit Indices for
 #' Bayesian Structural Equation Modeling: Comparison to Maximum Likelihood.
-#' *Psychological Methods, 25*(1), 46–70. <https://doi.org/10.1037/met0000224>
+#' *Psychological Methods, 25*(1), 46-70. <https://doi.org/10.1037/met0000224>
 #'
 #' Vehtari, A., Gelman, A., & Gabry, J. (2017). Practical Bayesian model evaluation
 #' using leave-one-out cross-validation and WAIC. *Statistics and Computing, 27*(5),
-#' 1413–1432. <https://doi.org/10.1007/s11222-016-9696-4>
+#' 1413-1432. <https://doi.org/10.1007/s11222-016-9696-4>
 #'
 #' @examples
 #' \dontrun{
-#' # ─────────────────────────────────────────────────────────────── #
+#' # --------------------------------------------------------------- #
 #' #    1. Bayesian Fit Measures after fitting Bayesian EFA model    #
-#' # ─────────────────────────────────────────────────────────────── #
+#' # --------------------------------------------------------------- #
 #'
 #' # Fit Bayesian EFA model to the famous Grant-White School Data (Holzinger y Swineford , 1939)
 #' befa_fit <- befa(
@@ -118,7 +118,7 @@
 #' # Posterios summaries (NAs when posterior draws have sds close to zero)
 #' bayesian_fit_measures$summary
 #'
-#' # # A tibble: 9 × 10
+#' # # A tibble: 9 x 10
 #' #   variable       mean   median      sd     mad       q5      q95  rhat ess_bulk ess_tail
 #' #   <chr>         <dbl>    <dbl>   <dbl>   <dbl>    <dbl>    <dbl> <dbl>    <dbl>    <dbl>
 #' # 1 Chi2        47.1     46.5    6.98    6.81     36.8     59.5     1.00    1410.    2596.
@@ -168,11 +168,11 @@
 #' # All Pareto k estimates are good (k < 0.7).
 #' # See help('pareto-k-diagnostic') for details.
 #'
-#' # ─────────────────────────────────────────────────────────────────────────────
+#' # -----------------------------------------------------------------------------
 #'
-#' # ────────────────────────────────────────────────────────────── #
+#' # -------------------------------------------------------------- #
 #' #    2. Bayesian Fit Measures when fitting Bayesian EFA model    #
-#' # ────────────────────────────────────────────────────────────── #
+#' # -------------------------------------------------------------- #
 #'
 #' # Fit Bayesian EFA model to the famous Grant-White School Data (Holzinger y Swineford , 1939)
 #' befa_fit <- befa(
@@ -188,7 +188,7 @@
 #' # befa_fit_measures output is inside the "fit_indices" object
 #' # befa_fit$fit_indices
 #'
-#' # ─────────────────────────────────────────────────────────────────────────────
+#' # -----------------------------------------------------------------------------
 #' }
 #'
 #' @export

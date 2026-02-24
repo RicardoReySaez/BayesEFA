@@ -50,20 +50,20 @@ the model-implied covariance matrix. \eqn{\mathbf{1}} is a vector of ones of len
 \item \strong{Omega Total (\eqn{\omega_t})}:
 Represents the proportion of variance in the unit-weighted total score
 (sum of all items) attributable to \emph{all} common factors.
-\deqn{\large \omega_t = \Large{\frac{\sum_{m=1}^M (\sum_{j=1}^J \lambda_{jm})^2}{\mathbf{1}^\top \cdot \mathbf{\Sigma} \cdot \mathbf{1}}}}
+\deqn{\omega_t = \frac{\sum_{m=1}^M (\sum_{j=1}^J \lambda_{jm})^2}{\mathbf{1}^\top \cdot \mathbf{\Sigma} \cdot \mathbf{1}}}
 \item \strong{Omega Subscale (\eqn{\omega_{s,m}})}:
 Represents the reliability of the sum score when isolating the variance
 attributable to a specific factor \eqn{m}, treating the unique variances
 as measurement error.
-\deqn{\large \omega_{s,m} = \Large{\frac{(\sum_{j=1}^J \lambda_{jm})^2}{(\sum_{j=1}^J \lambda_{jm})^2 + \sum_{j=1}^J \psi_j}}}
+\deqn{\omega_{s,m} = \frac{(\sum_{j=1}^J \lambda_{jm})^2}{(\sum_{j=1}^J \lambda_{jm})^2 + \sum_{j=1}^J \psi_j}}
 }
 }
 }
 \examples{
 \dontrun{
-# ──────────────────────────────────────────────────────────────────────── #
+# ------------------------------------------------------------------------ #
 #    1. Bayesian Reliability estimates after fitting Bayesian EFA model    #
-# ──────────────────────────────────────────────────────────────────────── #
+# ------------------------------------------------------------------------ #
 
 # Fit Bayesian EFA model
 befa_fit <- befa(
@@ -82,7 +82,7 @@ bayesian_omega <- befa_reliability(befa_fit, probs = c(.025, .975))
 # Posterior summaries
 bayesian_omega$summary
 
-# # A tibble: 4 × 10
+# # A tibble: 4 x 10
 #   variable     mean median     sd    mad    q5   q95  rhat ess_bulk ess_tail
 #   <chr>       <dbl>  <dbl>  <dbl>  <dbl> <dbl> <dbl> <dbl>    <dbl>    <dbl>
 # 1 omega_total 0.843  0.844 0.0108 0.0106 0.825 0.860 1.00     4628.    3442.
@@ -148,11 +148,11 @@ abline(
 )
 par(mfrow = c(1, 1))
 
-# ─────────────────────────────────────────────────────────────────────────────
+# -----------------------------------------------------------------------------
 
-# ─────────────────────────────────────────────────────────────────────── #
+# ----------------------------------------------------------------------- #
 #    2. Bayesian Reliability estimates when fitting Bayesian EFA model    #
-# ─────────────────────────────────────────────────────────────────────── #
+# ----------------------------------------------------------------------- #
 
 # Fit Bayesian model with compute_fit_indices = TRUE
 befa_fit <- befa(
@@ -168,7 +168,7 @@ befa_fit <- befa(
 # befa_reliability output is inside the "reliability" object
 # befa_fit$reliability
 
-# ─────────────────────────────────────────────────────────────────────────────
+# -----------------------------------------------------------------------------
 }
 
 }

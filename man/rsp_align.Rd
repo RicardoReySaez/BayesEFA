@@ -122,7 +122,7 @@ original \eqn{J \times M} loading matrix \eqn{\mathbf{\Lambda}} into that row ve
 The aligned output will be returned in this exact same flattened format.
 
 To illustrate, consider a \eqn{4 \times 3} loading matrix (4 items, 3 factors):
-\deqn{\large \mathbf{\Lambda} = \begin{bmatrix}
+\deqn{\mathbf{\Lambda} = \begin{bmatrix}
 \lambda_{11} & \lambda_{12} & \lambda_{13} \\
 \lambda_{21} & \lambda_{22} & \lambda_{23} \\
 \lambda_{31} & \lambda_{32} & \lambda_{33} \\
@@ -134,10 +134,10 @@ Depending on the \code{format} specified, the input rows must be structured as f
 \item \strong{Column-major} (\code{format = "column_major"}): Elements are filled column by column
 (factor by factor). This corresponds to the \code{as.vector(Lambda)} behavior in R and
 is the default output layout for Stan:
-\deqn{\large \text{vec}(\mathbf{\Lambda}) = \big[ \underbrace{\lambda_{11}, \lambda_{21}, \lambda_{31}, \lambda_{41}}_{\text{Factor 1}}, \, \underbrace{\lambda_{12}, \lambda_{22}, \lambda_{32}, \lambda_{42}}_{\text{Factor 2}}, \, \underbrace{\lambda_{13}, \lambda_{23}, \lambda_{33}, \lambda_{43}}_{\text{Factor 3}} \big]}
+\deqn{\text{vec}(\mathbf{\Lambda}) = \big[ \underbrace{\lambda_{11}, \lambda_{21}, \lambda_{31}, \lambda_{41}}_{\text{Factor 1}}, \, \underbrace{\lambda_{12}, \lambda_{22}, \lambda_{32}, \lambda_{42}}_{\text{Factor 2}}, \, \underbrace{\lambda_{13}, \lambda_{23}, \lambda_{33}, \lambda_{43}}_{\text{Factor 3}} \big]}
 \item \strong{Row-major} (\code{format = "row_major"}): Elements are filled row by row (item by item).
 This corresponds to \code{as.vector(t(Lambda))} in R:
-\deqn{\large \text{vec}(\mathbf{\Lambda}^\top) = \big[ \underbrace{\lambda_{11}, \lambda_{12}, \lambda_{13}}_{\text{Item 1}}, \, \underbrace{\lambda_{21}, \lambda_{22}, \lambda_{23}}_{\text{Item 2}}, \, \underbrace{\lambda_{31}, \lambda_{32}, \lambda_{33}}_{\text{Item 3}}, \, \underbrace{\lambda_{41}, \lambda_{42}, \lambda_{43}}_{\text{Item 4}} \big]}
+\deqn{\text{vec}(\mathbf{\Lambda}^\top) = \big[ \underbrace{\lambda_{11}, \lambda_{12}, \lambda_{13}}_{\text{Item 1}}, \, \underbrace{\lambda_{21}, \lambda_{22}, \lambda_{23}}_{\text{Item 2}}, \, \underbrace{\lambda_{31}, \lambda_{32}, \lambda_{33}}_{\text{Item 3}}, \, \underbrace{\lambda_{41}, \lambda_{42}, \lambda_{43}}_{\text{Item 4}} \big]}
 }
 }
 \examples{
