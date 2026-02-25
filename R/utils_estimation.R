@@ -169,7 +169,8 @@ normalize_stan_args <- function(backend, model_type, lambda_prior, stan_data, us
     "iter", "warmup", "chains", "cores", "control",
     "iter_sampling", "iter_warmup", "parallel_chains",
     "adapt_delta", "max_treedepth", "seed", "init", "refresh",
-    "show_messages", "show_message", "show_exceptions"
+    "show_messages", "show_message", "show_exceptions",
+    "loo_args"
   )
   extra_args <- args[!names(args) %in% known_keys]
 

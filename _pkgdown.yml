@@ -1,7 +1,21 @@
 url: https://ricardoreysaez.github.io/BayesEFA/
+
+home:
+  title: Bayesian Exploratory Factor Analysis
+
+authors:
+  Ricardo Rey-Sáez:
+    href: https://ricardoreysaez.github.io/
+
 template:
   bootstrap: 5
-  bootswatch: flatly
+  math-rendering: mathjax
+  light-switch: true
+  bslib:
+    primary: "#0054AD"
+    border-radius: 0.5rem
+    btn-border-radius: 0.25rem
+    danger: "#A6081A"
   includes:
     in_header: |
       <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
@@ -11,44 +25,63 @@ template:
 navbar:
   structure:
     left:  [intro, reference, articles, news]
-    right: [search, github]
+    right: [search, lightswitch, github]
   components:
     intro:
-      text: "Get Started"
+      text: Get Started
       href: articles/getting_started.html
     articles:
-      text: "Articles"
+      text: Articles
       menu:
-        - text: "Getting Started with BayesEFA"
-          href: articles/getting_started.html
-        - text: "Dealing with Rotational Indeterminacy"
+        - text: "Fixing Rotational Indeterminacy"
           href: articles/alignment.html
-        - text: "-------"
-        - text: "All Articles"
-          href: articles/index.html
+    news:
+      text: News
+      href: news/index.html
+
+articles:
+  - title: Tutorials
+    navbar: ~
+    contents:
+      - getting_started
+  - title: Advanced Topics
+    contents:
+      - alignment
 
 reference:
   - title: "Core Modeling"
-    desc: "Functions for estimating Bayesian Exploratory Factor Analysis models."
+    desc: >
+      Fit Bayesian EFA models and inspect results.
     contents:
-      - BayesEFA-package
       - befa
-  - title: "Alignment & Post-Processing"
-    desc: "Functions to resolve rotational indeterminacy and compute secondary outputs."
+      - summary.befa
+
+  - title: "Posterior Analysis"
+    desc: >
+      Extract, summarize, and align posterior draws.
     contents:
       - rsp_align
-      - befa_fit_measures
-      - befa_reliability
       - befa_factor_scores
       - extract_posterior_draws
-  - title: "Summary & Visualization"
-    desc: "Tools for inspecting the posterior distributions and summarizing models."
-    contents:
-      - summary.befa
       - posterior_summaries
+
+  - title: "Model Evaluation"
+    desc: >
+      Assess model fit, reliability, and factor scores.
+    contents:
+      - befa_fit_measures
+      - befa_reliability
+
+  - title: "S3 Methods"
+    desc: >
+      Print and display methods for BayesEFA objects.
+    contents:
       - print.summary.befa
       - print.befa_fitmeasures
-  - title: "Datasets"
-    desc: "Built-in datasets for examples and tutorials."
+
+  - title: "Data"
+    desc: >
+      Built-in datasets and package documentation.
     contents:
       - HS_data
+      - BayesEFA-package

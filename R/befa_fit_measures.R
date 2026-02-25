@@ -248,6 +248,9 @@ befa_fit_measures <- function(object, ...) {
   user_dots <- list(...)
   fit_obj <- object$stanfit
 
+  # Strip loo_args from dots — it's not a Stan argument
+  user_dots$loo_args <- NULL
+
   # Auto-detect iteration settings if not provided
   if (is.null(user_dots$iter)) user_dots$iter <- fit_obj@sim$iter
   if (is.null(user_dots$chains)) user_dots$chains <- fit_obj@sim$chains

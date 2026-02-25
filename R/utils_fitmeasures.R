@@ -15,9 +15,11 @@ compute_posterior_metrics <- function(object, data) {
   model_type <- object$model_type
   has_missing <- anyNA(data)
 
-  # Scale data for cor model
+  # Scale data for cor model or mean-center for cov model
   if (model_type == "cor") {
     data <- apply(data, 2, scale)
+  } else if (model_type == "cov") {
+    data <- scale(data, center = TRUE, scale = FALSE)
   }
 
   # ---- FIML PRE-PROCESSING ----
@@ -234,6 +236,11 @@ compute_null_metrics <- function(data, model_type, ll_saturated, stan_data, stan
     chisq_vec <- numeric(n_draws)
 
     # ---- FIML PRE-PROCESSING ----
+    # Mean-center data for cov model before computing pointwise log-likelihood
+    if (model_type == "cov") {
+      data <- scale(data, center = TRUE, scale = FALSE)
+    }
+
     comp_idx <- which(stats::complete.cases(data))
     miss_idx <- which(!stats::complete.cases(data))
 
@@ -250,10 +257,10 @@ compute_null_metrics <- function(data, model_type, ll_saturated, stan_data, stan
       for (i in 1:n_iter) {
         draw_idx <- draw_idx + 1
 
-        Sigma_s <- diag(draws_null[i, c, sig_idx]^2)
+        Sigma_s <- diag(as.numeric(draws_null[i, c, sig_idx])^2)
 
         if (model_type == "raw") {
-          Nu_s <- draws_null[i, c, nu_idx]
+          Nu_s <- as.numeric(draws_null[i, c, nu_idx])
         } else {
           Nu_s <- rep(0, J)
         }
@@ -273,7 +280,9 @@ compute_null_metrics <- function(data, model_type, ll_saturated, stan_data, stan
     } else {
       r_eff <- NA
     }
-    loo_null <- loo::loo(log_lik_array, r_eff = r_eff, cores = loo_config$cores)
+    loo_null <- suppressWarnings(
+      loo::loo(log_lik_array, r_eff = r_eff, cores = loo_config$cores)
+    )
     pD_null <- loo_null$estimates["p_loo", "Estimate"]
 
     # Final results
