@@ -174,7 +174,7 @@ compute_posterior_metrics <- function(object, data) {
 #' @return A list with chisq vector, pD, df, and lambda vector.
 #' @keywords internal
 #' @noRd
-compute_null_metrics <- function(data, model_type, ll_saturated, stan_data, stan_args_list, lambda_prior, loo_config = list(r_eff = TRUE, cores = 1)) {
+compute_null_metrics <- function(data, model_type, ll_saturated, stan_data, stan_args_list, lambda_prior, backend = "rstan", loo_config = list(r_eff = TRUE, cores = 1)) {
   N <- nrow(data)
   J <- ncol(data)
 
@@ -192,9 +192,6 @@ compute_null_metrics <- function(data, model_type, ll_saturated, stan_data, stan
 
   # Raw and cov null models require estimation via Stan
   if (model_type %in% c("raw", "cov")) {
-    # Unified null model with model_type flag
-    null_model <- stanmodels$befa_null
-
     # Prepare stan_data for null model: add model_type flag and required priors
     null_data <- stan_data
     null_data$model_type <- if (model_type == "raw") 1L else 2L
@@ -203,18 +200,29 @@ compute_null_metrics <- function(data, model_type, ll_saturated, stan_data, stan
     if (is.null(null_data$pr_nu)) null_data$pr_nu <- c(0, 10)
     if (is.null(null_data$pr_sigma)) null_data$pr_sigma <- c(3, 0, 2.5)
 
-    # Prepare sampling arguments
-    call_args <- list(object = null_model)
-    call_args$data <- null_data
-    call_args <- c(call_args, stan_args_list)
-
-    # Do not show anything by console!
-    call_args$refresh <- 0
-    call_args$show_messages <- FALSE
-    call_args$open_progress <- FALSE
+    # Suppress messages when running the null model
+    stan_args_list$refresh <- 0
+    stan_args_list$show_message <- FALSE
+    stan_args_list$show_messages <- FALSE
+    
+    # Exclude arguments we are about to explicitly pass to 'fit_befa_model'
+    explicit_args <- c("model_name", "stan_data", "backend", "verbose", "model_type", "lambda_prior")
+    stan_args_list <- stan_args_list[setdiff(names(stan_args_list), explicit_args)]
 
     # Sampling from the model
-    fit_null <- do.call(rstan::sampling, call_args)
+    # We use fit_befa_model to manage backend-specific behaviors securely
+    fit_args <- c(
+      list(
+        model_name = "befa_null",
+        stan_data = null_data,
+        backend = backend,
+        verbose = FALSE,
+        model_type = model_type,
+        lambda_prior = lambda_prior
+      ),
+      stan_args_list
+    )
+    fit_null <- suppressWarnings(suppressMessages(do.call(fit_befa_model, fit_args)))
 
     # Posterior draws as 3D array (iter x chains x variables)
     draws_null <- posterior::as_draws_array(fit_null)

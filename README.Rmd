@@ -23,31 +23,33 @@ knitr::opts_chunk$set(
 
 The **BayesEFA** package provides a simple and intuitive framework for estimating Bayesian Exploratory Factor Analysis (EFA) models via `Stan`. 
 
-## Key Features
+While the package supports both `rstan` and `cmdstanr`, the use of `cmdstanr` is highly recommended as it is the only backend that ensures compatibility with the latest version of `Stan` and typically offers faster estimation times. Please install `cmdstanr` by following the [official guide](https://mc-stan.org/cmdstanr/articles/cmdstanr.html).
 
-*   **Zero Constraints:** Estimate unrestricted factor loading matrices without fixing parameters.
-*   **Rotational Indeterminacy Resolved:** Recovers interpretable posterior distributions using an efficient Rotation-Sign-Permutation (RSP) alignment algorithm.
-*   **Flexible Specifications:** Built-in support for correlation, covariance, and unstandardized models with flexible prior distributions.
-*   **Missing Data:** Natively handles missing data via Full Information Maximum Likelihood (FIML).
-*   **Full Posterior Inference:** Computes Bayesian SEM fit indices, Omega reliability estimates, and factor scores with full uncertainty quantification.
-*   **Intuitive & Robust:** Solves non-positive definite matrices and Heywood cases by default, while remaining as easy to use as `psych`.
-
-## Installation
-
-### 1. Install `cmdstanr` (Highly Recommended)
-
-While `BayesEFA` natively supports `rstan` out of the box, we strongly recommend using the `cmdstanr` backend for significantly faster estimation and a lower memory footprint. Please install `cmdstanr` by following the [official guide](https://mc-stan.org/cmdstanr/articles/cmdstanr.html).
-
-### 2. Install BayesEFA
+## Installation in Windows and Linux
 
 You can install the development version of BayesEFA from [GitHub](https://github.com/RicardoReySaez/BayesEFA) with:
 
 ```r
 # install.packages("devtools")
-devtools::install_github("RicardoReySaez/BayesEFA")
+devtools::install_github("RicardoReySaez/BayesEFA", force = TRUE)
 ```
 
-Once installed, **BayesEFA** will automatically detect and use `cmdstanr` if it is available on your system.
+## Installation in macOS
+
+Since `BayesEFA` includes custom C++ functions, macOS users must configure the R compilation toolchain. Following the recommendations from the [latent](https://github.com/Marcosjnez/latent) package, we suggest using `macrtools` by James Balamuta to automate this setup:
+
+```r
+# 1. Install macrtools
+# install.packages("remotes")
+remotes::install_github("coatless-mac/macrtools")
+
+# 2. Setup the toolchain and OpenMP support
+macrtools::macos_rtools_install()
+macrtools::openmp_install()
+
+# 3. Install BayesEFA
+devtools::install_github("RicardoReySaez/BayesEFA", force = TRUE)
+```
 
 ## Quick Start
 
@@ -56,7 +58,7 @@ Here is a basic example showing how to fit a Bayesian EFA model:
 ```r
 library(BayesEFA)
 
-# Fit a 3-factor Bayesian EFA model using the built-in Holzinger-Swineford dataset
+# Fit a 3-factor Bayesian EFA model using the Holzinger & Swineford dataset
 fit <- befa(data = HS_data, n_factors = 3)
 
 # Print a comprehensive summary of the model (inspired in psych package output)
@@ -86,7 +88,7 @@ summary(befa_fit, cutoff = 0.1, signif_stars = TRUE)
 # Index         Estimate     SD    CI_Low   CI_High
 # —————————————————————————————————————————————————
 # Chi2             47.12   6.98     35.37     62.56
-# Chi2_ppp          0.12
+# Chi2_ppp          0.11
 # Chi2_Null       918.85   0.00    918.85    918.85
 # BRMSEA            0.05   0.02      0.00      0.09
 # BGamma            0.99   0.00      0.98      1.00

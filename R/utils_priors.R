@@ -21,14 +21,14 @@ get_default_priors <- function(model, lambda_prior, n_factors) {
     defaults$xi <- 100
     defaults$h2 <- c(1, 1)
   } else if (lambda_prior == "normal") {
-    defaults$lambda <- c(0, 1) # Normal prior for loadings
+    defaults$lambda <- c(0, 10) # Normal prior for loadings
     defaults$psi <- c(0.5, 0.5)
   }
 
   # Model-specific priors
   if (model == "raw") {
     # Raw model: needs priors for means (nu) and residual SDs (sigma)
-    defaults$nu <- c(0, 10)
+    defaults$nu <- c(0, 40)
     defaults$sigma <- c(3, 0, 2.5)
   } else if (model == "cov") {
     # Cov model: needs priors for residual SDs (sigma), but not means

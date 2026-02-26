@@ -18,7 +18,6 @@
 #' @importFrom loo loo relative_eff
 #' @importFrom posterior as_draws_array
 #' @importFrom mvnfast dmvn rmvn
-#' @importFrom brms read_csv_as_stanfit
 #' @importFrom stats complete.cases dnorm na.omit qnorm quantile rnorm sd
 #' @importFrom withr local_seed
 #'

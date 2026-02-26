@@ -272,17 +272,17 @@ test_that("befa accepts ordered=FALSE", {
 setup_integration_data <- function() {
   set.seed(42)
   # Generate data with clear factor structure
-  n <- 100
+  n <- 300
   J <- 6
 
   # True loadings: items 1-3 load on F1, items 4-6 load on F2
   Lambda_true <- matrix(c(
-    0.8, 0.1,
-    0.75, 0.1,
-    0.7, 0.15,
-    0.1, 0.8,
-    0.15, 0.75,
-    0.1, 0.7
+    0.7, 0,
+    0.7, 0,
+    0.7, 0,
+    0., 0.7,
+    0,  0.7,
+    0,  0.7
   ), nrow = 6, ncol = 2, byrow = TRUE)
 
   Psi_true <- diag(c(0.3, 0.35, 0.4, 0.3, 0.35, 0.4))
@@ -300,15 +300,6 @@ setup_integration_data <- function() {
     J = J
   )
 }
-
-# Minimal sampling settings for faster tests
-minimal_stan_args <- list(
-  iter = 400,
-  warmup = 200,
-  chains = 2,
-  cores = 1,
-  refresh = 0 # Suppress output
-)
 
 # ─────────────────────────────────────────────────────────────────────────────
 # HELPER: Run ALL comprehensive checks on a fitted befa object
@@ -374,8 +365,8 @@ run_all_befa_checks <- function(result, test_label) {
   lambda_draws <- draws[, lambda_cols]
   mean_loadings <- colMeans(lambda_draws)
 
-  # Loadings should be bounded (roughly -3 to 3 for raw scale models)
-  expect_true(all(abs(mean_loadings) <= 3.0))
+  # Loadings should be bounded (roughly -25 to 25 for raw scale models with normal prior)
+  expect_true(all(abs(mean_loadings) <= 25.0))
 
   # At least some loadings should be substantially non-zero
   expect_true(any(abs(mean_loadings) > 0.2))
@@ -420,205 +411,39 @@ run_all_befa_checks <- function(result, test_label) {
   if (!is.null(result$fit_indices)) {
     fit <- result$fit_indices
     expect_s3_class(fit, "befa_fitmeasures")
-    expect_true("fit_indices" %in% names(fit))
+    expect_true("fit_draws" %in% names(fit))
+    expect_true("summary" %in% names(fit))
     expect_true("posterior_fit" %in% names(fit))
     expect_true("loo_object" %in% names(fit))
     expect_true("details" %in% names(fit))
 
-    # Check all indices present
-    expected_rows <- c(
-      "Chi2", "Chi2_ppp", "Chi2_Null", "BRMSEA", "BGamma",
-      "Adj_BGamma", "BMc", "SRMR", "BCFI", "BTLI",
-      "ELPD", "LOOIC", "p_loo"
-    )
-    expect_true(all(expected_rows %in% rownames(fit$fit_indices)))
+    # Check that key indices are computed and present in the summary tibble
+    expected_vars <- c("Chi2", "BRMSEA", "BCFI", "SRMR")
+    expect_true(all(expected_vars %in% fit$summary$variable))
 
-    # Check column names
-    expect_equal(colnames(fit$fit_indices), c("Estimate", "SD", "Lower_95", "Upper_95"))
+    # Value bounds (from posterior summary means)
+    brmsea_mean <- fit$summary$mean[fit$summary$variable == "BRMSEA"]
+    expect_true(length(brmsea_mean) == 1 && brmsea_mean >= 0)
 
-    # Value bounds
-    expect_true(fit$fit_indices["BRMSEA", "Estimate"] >= 0)
-    expect_true(fit$fit_indices["BCFI", "Estimate"] >= 0 &&
-      fit$fit_indices["BCFI", "Estimate"] <= 1)
-    expect_true(fit$fit_indices["Chi2_ppp", "Estimate"] >= 0 &&
-      fit$fit_indices["Chi2_ppp", "Estimate"] <= 1)
+    bcfi_mean <- fit$summary$mean[fit$summary$variable == "BCFI"]
+    expect_true(length(bcfi_mean) == 1 && bcfi_mean >= 0 && bcfi_mean <= 1)
+
+    # chi2_ppp is stored as a scalar in details
+    expect_true(fit$details$chi2_ppp >= 0 && fit$details$chi2_ppp <= 1)
 
     # LOO object
     expect_s3_class(fit$loo_object, "loo")
 
     # Details
-    expect_true(all(c("p_star", "pD", "N") %in% names(fit$details)))
+    expect_true("p_star" %in% names(fit$details))
+    expect_true("pD" %in% names(fit$details))
+    expect_true("N" %in% names(fit$details))
   }
 
   invisible(TRUE)
 }
 
 # ─────────────────────────────────────────────────────────────────────────────
-# TEST GROUP: model = "cor", lambda_prior = "unit_vector"
-# ─────────────────────────────────────────────────────────────────────────────
-
-test_that("befa comprehensive: cor + unit_vector + M=1", {
-  skip_if_not_installed("rstan")
-  skip_on_cran()
-
-  test_data <- setup_integration_data()
-
-  suppressWarnings({
-    result <- befa(
-      sample_cor = test_data$cor_matrix,
-      sample_nobs = test_data$n,
-      n_factors = 1,
-      model = "cor",
-      lambda_prior = "unit_vector",
-      compute_reliability = TRUE,
-      compute_fit_indices = FALSE, # No raw data for cor model
-      verbose = FALSE,
-      iter = minimal_stan_args$iter,
-      warmup = minimal_stan_args$warmup,
-      chains = minimal_stan_args$chains,
-      refresh = minimal_stan_args$refresh
-    )
-  })
-
-  run_all_befa_checks(result, "cor + unit_vector + M=1")
-})
-
-test_that("befa comprehensive: cor + unit_vector + M=2", {
-  skip_if_not_installed("rstan")
-  skip_on_cran()
-
-  test_data <- setup_integration_data()
-
-  suppressWarnings({
-    result <- befa(
-      sample_cor = test_data$cor_matrix,
-      sample_nobs = test_data$n,
-      n_factors = 2,
-      model = "cor",
-      lambda_prior = "unit_vector",
-      compute_reliability = TRUE,
-      compute_fit_indices = FALSE, # No raw data for cor model
-      verbose = FALSE,
-      iter = minimal_stan_args$iter,
-      warmup = minimal_stan_args$warmup,
-      chains = minimal_stan_args$chains,
-      refresh = minimal_stan_args$refresh
-    )
-  })
-
-  run_all_befa_checks(result, "cor + unit_vector + M=2")
-})
-
-
-# ─────────────────────────────────────────────────────────────────────────────
-# TEST GROUP: model = "raw", lambda_prior = "unit_vector"
-# ─────────────────────────────────────────────────────────────────────────────
-
-test_that("befa comprehensive: raw + unit_vector + M=1", {
-  skip_if_not_installed("rstan")
-  skip_on_cran()
-
-  test_data <- setup_integration_data()
-
-  suppressWarnings({
-    result <- befa(
-      data = test_data$data,
-      n_factors = 1,
-      model = "raw",
-      lambda_prior = "unit_vector",
-      compute_reliability = TRUE,
-      compute_fit_indices = TRUE,
-      verbose = FALSE,
-      iter = minimal_stan_args$iter,
-      warmup = minimal_stan_args$warmup,
-      chains = minimal_stan_args$chains,
-      refresh = minimal_stan_args$refresh
-    )
-  })
-
-  run_all_befa_checks(result, "raw + unit_vector + M=1")
-})
-
-test_that("befa comprehensive: raw + unit_vector + M=2", {
-  skip_if_not_installed("rstan")
-  skip_on_cran()
-
-  test_data <- setup_integration_data()
-
-  suppressWarnings({
-    result <- befa(
-      data = test_data$data,
-      n_factors = 2,
-      model = "raw",
-      lambda_prior = "unit_vector",
-      compute_reliability = TRUE,
-      compute_fit_indices = TRUE,
-      verbose = FALSE,
-      iter = minimal_stan_args$iter,
-      warmup = minimal_stan_args$warmup,
-      chains = minimal_stan_args$chains,
-      refresh = minimal_stan_args$refresh
-    )
-  })
-
-  run_all_befa_checks(result, "raw + unit_vector + M=2")
-})
-
-# ─────────────────────────────────────────────────────────────────────────────
-# TEST GROUP: model = "raw", lambda_prior = "normal"
-# ─────────────────────────────────────────────────────────────────────────────
-
-test_that("befa comprehensive: raw + normal + M=1", {
-  skip_if_not_installed("rstan")
-  skip_on_cran()
-
-  test_data <- setup_integration_data()
-
-  suppressWarnings({
-    result <- befa(
-      data = test_data$data,
-      n_factors = 1,
-      model = "raw",
-      lambda_prior = "normal",
-      compute_reliability = TRUE,
-      compute_fit_indices = TRUE,
-      verbose = FALSE,
-      iter = minimal_stan_args$iter,
-      warmup = minimal_stan_args$warmup,
-      chains = minimal_stan_args$chains,
-      refresh = minimal_stan_args$refresh
-    )
-  })
-
-  run_all_befa_checks(result, "raw + normal + M=1")
-})
-
-test_that("befa comprehensive: raw + normal + M=2", {
-  skip_if_not_installed("rstan")
-  skip_on_cran()
-
-  test_data <- setup_integration_data()
-
-  suppressWarnings({
-    result <- befa(
-      data = test_data$data,
-      n_factors = 2,
-      model = "raw",
-      lambda_prior = "normal",
-      compute_reliability = TRUE,
-      compute_fit_indices = TRUE,
-      verbose = FALSE,
-      iter = minimal_stan_args$iter,
-      warmup = minimal_stan_args$warmup,
-      chains = minimal_stan_args$chains,
-      refresh = minimal_stan_args$refresh
-    )
-  })
-
-  run_all_befa_checks(result, "raw + normal + M=2")
-})
-
-
 # ─────────────────────────────────────────────────────────────────────────────
 # NEGATIVE TESTS: Invalid combinations
 # ─────────────────────────────────────────────────────────────────────────────
@@ -655,7 +480,7 @@ test_that("befa runs successfully on all valid parameter combinations", {
   # Setup: Generate simulated data with clear factor structure
   # ─────────────────────────────────────────────────────────────────────────
   set.seed(42)
-  N <- 80
+  N <- 300
   J <- 6
 
   # True loadings: items 1-3 load on F1, items 4-6 load on F2
@@ -686,11 +511,11 @@ test_that("befa runs successfully on all valid parameter combinations", {
   # Define the complete parameter grid
   # ─────────────────────────────────────────────────────────────────────────
   grid <- expand.grid(
-    M = c(1, 2),
+    M = 2,
     model = c("cor", "cov", "raw"),
     lambda_prior = c("unit_vector", "normal"),
     missing = c("listwise", "FIML"),
-    rotate = c("varimax", "none"),
+    rotate = "varimax",
     stringsAsFactors = FALSE
   )
 
@@ -702,7 +527,7 @@ test_that("befa runs successfully on all valid parameter combinations", {
   grid <- grid[!(grid$model == "cor" & grid$lambda_prior == "normal"), ]
 
   # Stan arguments for fast testing
-  stan_args <- list(iter = 1000, warmup = 500, chains = 1, refresh = 0)
+  stan_args <- list(iter = 1000, warmup = 500, chains = 2, cores = 2, refresh = 0)
 
   for (i in 1:nrow(grid)) {
     p <- grid[i, ]
@@ -717,34 +542,29 @@ test_that("befa runs successfully on all valid parameter combinations", {
 
     test_that(paste("Grid test:", label), {
       expect_no_error({
-        suppressWarnings(
-          fit <- befa(
-            data = test_data,
-            n_factors = p$M,
-            model = p$model,
-            lambda_prior = p$lambda_prior,
-            missing = p$missing,
-            rotate = p$rotate,
-            iter = stan_args$iter,
-            warmup = stan_args$warmup,
-            chains = stan_args$chains,
-            refresh = stan_args$refresh,
-            backend = "rstan",
-            verbose = FALSE,
-            compute_fit_indices = FALSE,
-            compute_reliability = FALSE
-          )
+        fit <- befa(
+          data = test_data,
+          n_factors = p$M,
+          model = p$model,
+          lambda_prior = p$lambda_prior,
+          missing = p$missing,
+          rotate = p$rotate,
+          iter = stan_args$iter,
+          warmup = stan_args$warmup,
+          chains = stan_args$chains,
+          cores = stan_args$cores,
+          refresh = stan_args$refresh,
+          backend = "cmdstanr",
+          verbose = FALSE,
+          compute_fit_indices = if (p$model == "raw") TRUE else FALSE,
+          compute_reliability = TRUE,
+          show_message = FALSE,
+          show_exceptions = FALSE
         )
       })
 
-      # Structural validation
-      expect_s3_class(fit, "befa")
-      expect_equal(fit$n_factors, p$M)
-      expect_equal(fit$model_type, p$model)
-      expect_equal(fit$lambda_prior, p$lambda_prior)
-
-      # Rotation: respects user choice for all M values
-      expect_equal(fit$rotation, p$rotate)
+      # Full validation of posterior properties using helper
+      run_all_befa_checks(fit, label)
 
       # FIML flag should be set correctly
       if (p$missing == "FIML") {

@@ -91,11 +91,11 @@ when \code{compute_fit_indices = TRUE}. Common arguments include:
 \itemize{
 \item \code{xi}: Repulsion parameter (unit_vector prior). Default: \code{100}. \strong{Not recommended to
 be modified by the user}.
-\item \code{nu}: c(mean, sd) for intercepts (raw model). Default: \code{c(0, 10)} -> N(0, 10).
+\item \code{nu}: c(mean, sd) for intercepts (raw model). Default: \code{c(0, 40)} -> N(0, 40).
 \item \code{sigma}: c(df, loc, scale) for residual SDs (cov/raw models). Default: \code{c(3, 0, 2.5)} -> half-t(3, 0, 2.5).
 \item \code{h2}: c(alpha, beta) for communalities (unit_vector prior). Default: \code{c(1, 1)} -> Beta(1, 1).
 Using this default setting implies a \strong{uniform joint distribution over the factor loadings} when \code{lambda_prior = "unit_vector"}.
-\item \code{lambda}: c(mean, sd) for loadings (normal prior). Default: \code{c(0, 1)} -> N(0, 1).
+\item \code{lambda}: c(mean, sd) for loadings (normal prior). Default: \code{c(0, 10)} -> N(0, 10).
 For the unidimensional model, c(alpha, beta) -> Beta(1, 1).
 \item \code{psi}: c(alpha, beta) for uniquenesses (normal prior). Default: \code{c(0.5, 0.5)} -> InvGamma(0.5, 0.5).
 }}

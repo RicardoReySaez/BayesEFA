@@ -39,11 +39,11 @@
 #' @param prior Named list. User-defined prior hyperparameters (override defaults):
 #'   * `xi`: Repulsion parameter (unit_vector prior). Default: `100`. **Not recommended to
 #'     be modified by the user**.
-#'   * `nu`: c(mean, sd) for intercepts (raw model). Default: `c(0, 10)` -> N(0, 10).
+#'   * `nu`: c(mean, sd) for intercepts (raw model). Default: `c(0, 40)` -> N(0, 40).
 #'   * `sigma`: c(df, loc, scale) for residual SDs (cov/raw models). Default: `c(3, 0, 2.5)` -> half-t(3, 0, 2.5).
 #'   * `h2`: c(alpha, beta) for communalities (unit_vector prior). Default: `c(1, 1)` -> Beta(1, 1).
 #'     Using this default setting implies a **uniform joint distribution over the factor loadings** when `lambda_prior = "unit_vector"`.
-#'   * `lambda`: c(mean, sd) for loadings (normal prior). Default: `c(0, 1)` -> N(0, 1).
+#'   * `lambda`: c(mean, sd) for loadings (normal prior). Default: `c(0, 10)` -> N(0, 10).
 #'     For the unidimensional model, c(alpha, beta) -> Beta(1, 1).
 #'   * `psi`: c(alpha, beta) for uniquenesses (normal prior). Default: `c(0.5, 0.5)` -> InvGamma(0.5, 0.5).
 #' @param compute_fit_indices Logical. If TRUE (default), computes Bayesian fit indices after estimation.
@@ -422,7 +422,8 @@ befa <- function(data = NULL,
       factor_scores = factor_scores,
       ordered = ordered,
       rsp_args = rsp_config,
-      loo_args = loo_config
+      loo_args = loo_config,
+      backend = backend
     ),
     rsp_objective = rsp_res$rsp_objective,
     call = match.call()

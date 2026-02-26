@@ -256,8 +256,11 @@ befa_fit_measures <- function(object, ...) {
   if (is.null(user_dots$chains)) user_dots$chains <- fit_obj@sim$chains
   if (is.null(user_dots$warmup)) user_dots$warmup <- fit_obj@sim$warmup
 
+  # Detect backend
+  backend_used <- if (!is.null(object$options$backend)) object$options$backend else "rstan"
+
   null_stan_args <- normalize_stan_args(
-    backend = "rstan", model_type = object$model_type,
+    backend = backend_used, model_type = object$model_type,
     lambda_prior = object$lambda_prior,
     stan_data = object$stan_data, user_dots = user_dots
   )
@@ -273,6 +276,7 @@ befa_fit_measures <- function(object, ...) {
       stan_data = object$stan_data,
       stan_args_list = null_stan_args,
       lambda_prior = object$lambda_prior,
+      backend = backend_used,
       loo_config = loo_config
     )
   ))

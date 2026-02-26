@@ -1,0 +1,9 @@
+div.sourceCode {
+    border-left: 3.5px solid #5C9CE6 !important;
+    border-top-left-radius: 0.5rem !important;
+    border-bottom-left-radius: 0.5rem !important;
+}
+
+div.sourceCode pre {
+    border-left: none !important;
+}

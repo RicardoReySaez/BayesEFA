@@ -115,7 +115,7 @@ test_that("normalize_stan_args handles parallel_chains -> cores mapping", {
   expect_equal(result$cores, 2)
 })
 
-test_that("normalize_stan_args defaults cores to chains when not specified", {
+test_that("normalize_stan_args defaults cores to 1 when not specified", {
   stan_data <- get_test_stan_data()
 
   result <- normalize_stan_args(
@@ -127,7 +127,7 @@ test_that("normalize_stan_args defaults cores to chains when not specified", {
   )
 
   expect_equal(result$chains, 3)
-  expect_equal(result$cores, 3)
+  expect_equal(result$cores, 1)
 })
 
 test_that("normalize_stan_args extracts adapt_delta from control list", {

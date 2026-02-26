@@ -136,7 +136,8 @@ normalize_stan_args <- function(backend, model_type, lambda_prior, stan_data, us
   if (!is.null(args$cores)) cores_input <- args$cores
   if (!is.null(args$parallel_chains)) cores_input <- args$parallel_chains
 
-  cores <- if (!is.null(cores_input)) cores_input else chains
+  # Non-parallelized estimation if not indicated
+  cores <- if (!is.null(cores_input)) cores_input else 1
 
   # Control parameters (extract from list or direct args)
   adapt_delta <- defaults$adapt_delta
@@ -282,7 +283,7 @@ get_befa_inits <- function(model_type, lambda_prior, stan_data, n_chains) {
       # Type 1: Unit Vector (UV) -> h2, Z
       if (lambda_type == 1) {
         inits$h2 <- pmin(0.95, pmax(0.05, as.array(initial_h2 + rnorm(J, 0, 0.05))))
-        inits$Z <- matrix(rnorm(J * M, 0, 0.5), nrow = J, ncol = M)
+        inits$Z <- matrix(rnorm(J * M, 0, 1), nrow = J, ncol = M)
 
         # Type 2: Unidimensional -> Lambda_uni
       } else if (lambda_type == 2) {

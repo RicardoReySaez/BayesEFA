@@ -19,13 +19,13 @@ test_that("get_default_priors returns xi and h2 for unit_vector with M > 1", {
 
 test_that("get_default_priors returns lambda and psi for normal prior", {
   result <- get_default_priors("raw", "normal", n_factors = 2)
-  expect_equal(result$lambda, c(0, 1))
+  expect_equal(result$lambda, c(0, 10))
   expect_equal(result$psi, c(0.5, 0.5))
 })
 
 test_that("get_default_priors adds nu and sigma for raw model", {
   result <- get_default_priors("raw", "unit_vector", n_factors = 2)
-  expect_equal(result$nu, c(0, 10))
+  expect_equal(result$nu, c(0, 40))
   expect_equal(result$sigma, c(3, 0, 2.5))
 })
 
@@ -148,10 +148,10 @@ get_minimal_stan_data <- function(M = 2) {
 
 test_that("append_priors_to_data adds pr_nu and pr_sigma for raw model", {
   stan_data <- get_minimal_stan_data()
-  final_prior <- list(nu = c(0, 10), sigma = c(3, 0, 2.5), xi = 100, h2 = c(1, 1))
+  final_prior <- list(nu = c(0, 40), sigma = c(3, 0, 2.5), xi = 100, h2 = c(1, 1))
   result <- append_priors_to_data(stan_data, final_prior, "raw", "unit_vector")
 
-  expect_equal(result$pr_nu, c(0, 10))
+  expect_equal(result$pr_nu, c(0, 40))
   expect_equal(result$pr_sigma, c(3, 0, 2.5))
 })
 
@@ -184,10 +184,10 @@ test_that("append_priors_to_data adds pr_xi and pr_h2 for unit_vector (M > 1)", 
 
 test_that("append_priors_to_data adds pr_Lambda and pr_psi for normal prior", {
   stan_data <- get_minimal_stan_data()
-  final_prior <- list(lambda = c(0, 1), psi = c(0.5, 0.5), nu = c(0, 10), sigma = c(3, 0, 2.5))
+  final_prior <- list(lambda = c(0, 10), psi = c(0.5, 0.5), nu = c(0, 40), sigma = c(3, 0, 2.5))
   result <- append_priors_to_data(stan_data, final_prior, "raw", "normal")
 
-  expect_equal(result$pr_Lambda, c(0, 1))
+  expect_equal(result$pr_Lambda, c(0, 10))
   expect_equal(result$pr_psi, c(0.5, 0.5))
 })
 

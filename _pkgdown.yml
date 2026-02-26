@@ -24,20 +24,23 @@ template:
 
 navbar:
   structure:
-    left:  [intro, reference, articles, news]
+    left:  [intro, examples, news, reference]
     right: [search, lightswitch, github]
   components:
     intro:
-      text: Get Started
+      text: Getting Started
       href: articles/getting_started.html
-    articles:
-      text: Articles
+    examples:
+      text: Examples
       menu:
         - text: "Fixing Rotational Indeterminacy"
           href: articles/alignment.html
     news:
       text: News
       href: news/index.html
+    reference:
+      text: Functions
+      href: reference/index.html
 
 articles:
   - title: Tutorials
@@ -49,39 +52,19 @@ articles:
       - alignment
 
 reference:
-  - title: "Core Modeling"
+  - title: "All Functions"
     desc: >
-      Fit Bayesian EFA models and inspect results.
+      Complete list of functions and datasets available in the BayesEFA package.
     contents:
       - befa
       - summary.befa
-
-  - title: "Posterior Analysis"
-    desc: >
-      Extract, summarize, and align posterior draws.
-    contents:
       - rsp_align
       - befa_factor_scores
       - extract_posterior_draws
       - posterior_summaries
-
-  - title: "Model Evaluation"
-    desc: >
-      Assess model fit, reliability, and factor scores.
-    contents:
       - befa_fit_measures
       - befa_reliability
-
-  - title: "S3 Methods"
-    desc: >
-      Print and display methods for BayesEFA objects.
-    contents:
       - print.summary.befa
       - print.befa_fitmeasures
-
-  - title: "Data"
-    desc: >
-      Built-in datasets and package documentation.
-    contents:
       - HS_data
       - BayesEFA-package

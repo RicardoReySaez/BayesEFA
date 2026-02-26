@@ -205,7 +205,7 @@ check_befa_inputs <- function(args) {
   check_is_logical(verbose, "verbose")
 
   # Validate 'missing' argument (default to "listwise" for backwards compatibility)
-  missing_method <- if (is.null(args$missing)) "listwise" else args$missing
+  missing_method <- if (is.null(missing)) "listwise" else missing
   if (!(missing_method %in% c("listwise", "FIML"))) {
     stop("Argument 'missing' must be 'listwise' or 'FIML'.", call. = FALSE)
   }

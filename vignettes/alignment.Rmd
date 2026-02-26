@@ -1,8 +1,8 @@
 ---
-title: "Fixing Rotational Indeterminacy with rsp_align"
+title: "Solving Rotational Indeterminacy"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Fixing Rotational Indeterminacy with rsp_align}
+  %\VignetteIndexEntry{Solving Rotational Indeterminacy}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -16,15 +16,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-A foundational challenge in Bayesian Exploratory Factor Analysis (BEFA) is that the latent structure is not uniquely identified by the data. Because the model-implied covariance matrix is invariant to orthogonal rotations, an infinite number of factor loading matrices can produce the exact same fit. In a Bayesian framework, this symmetry causes the posterior distribution to be highly multimodal. As a Markov Chain Monte Carlo (MCMC) algorithm explores the parameter space, it will naturally jump between these equivalent modes. 
-
-In practice, this means that the order of the factors might swap (label switching) and their directions might reverse (sign switching) from one iteration to the next. Consequently, if we naively calculate the posterior mean of the raw MCMC draws, the positive and negative values will cancel each other out, artificially shrinking the parameter estimates toward zero and destroying any substantive interpretation.
-
-## The Alignment Solution: The E-RSP Algorithm
-
-A straightforward solution to this problem is to align the posterior draws after sampling. The `rsp_align()` function in the `BayesEFA` package achieves this by implementing the Efficient Rotation-Sign-Permutation (E-RSP) algorithm, which yields an exact alignment for high-dimensional factor models in just a few seconds. Here, we illustrate how to use `rsp_align()` to effectively recover the underlying factor structure.
-
-### The unrotated solution
+Bayesian EFA models suffer from rotational indeterminacy, causing MCMC chains to "jump" between equivalent modes. This leads to label and sign switching across iterations which, if left uncorrected, causes posterior means to cancel out and results to become uninterpretable. To resolve this, `BayesEFA` provides the `rsp_align()` function. This implements the Efficient Rotation-Sign-Permutation (E-RSP) algorithm proposed by Rey-Sáez & Revuelta (2026), an exact alignment method that recovers the underlying factor structure in seconds, even for high-dimensional models.
 
 Let's begin by generating a dataset from a simple, two-dimensional latent structure. This will serve as our ground truth.
 
@@ -57,6 +49,8 @@ X <- matrix(rnorm(300 * nrow(L_true)), ncol = nrow(L_true)) %*% chol(R_true)
 colnames(X) <- paste0("Item_", 1:6)
 ```
 
+## The unrotated solution
+
 We will fit the Bayesian EFA model using `befa()`. To illustrate the pathology of rotational indeterminacy, we explicitly disable the internal alignment process by setting `rotate = "none"`.
 
 ```{r}
@@ -81,11 +75,11 @@ draws_unaligned <- extract_posterior_draws(
 )
 ```
 
-As we will see below, attempting to summarize the posterior distributions at this stage is meaningless due to **rotational indeterminacy**. By not applying any post-hoc alignment or rotation method, the MCMC chains have freely explored an unidentified, multimodal parameter space, generating several obvious anomalies in the summaries:
+As we will see below, attempting to summarize the posterior distributions at this stage is meaningless due to rotational indeterminacy. By not applying any post-hoc alignment or rotation method, the MCMC chains have freely explored an unidentified, multimodal parameter space, generating several obvious anomalies in the summaries:
 
-* **Null means and medians:** They are all very close to zero. By averaging over infinite equivalent rotations that have flipped signs or swapped positions, the factor loadings essentially cancel each other out.
-* **Extreme uncertainty (`sd` and quantiles):** The posterior standard deviations are huge (ranging from 0.47 to 0.56). Considering that standardized factor loadings range between -1 and 1, this variability is extremely high. Consequently, the 90% credible intervals (`q5` to `q95`) are massive (e.g., from -0.78 to +0.79), and absolutely all of them symmetrically include 0.
-* **Convergence and mixing issues:** Because the model is unidentified, the chains struggle to converge stably. This is reflected in some $\hat{R}$ (`rhat`) values exceeding the recommended 1.01 threshold, as well as rather low effective sample sizes (`ess_bulk`).
+* **Null summaries:** Means and medians collapse toward zero as equivalent rotations with opposing signs cancel each other out.
+* **Extreme uncertainty:** Posterior SDs and credible intervals become massive (e.g., spanning from -0.8 to +0.8), rendering the estimates uninformative.
+* **Poor convergence diagnostics:** The lack of identification causes unstable convergence, reflected in elevated $\hat{R}$ values (>1.01) and low effective sample sizes.
 
 ```{r}
 posterior_summaries(fit_unaligned, pars = "Lambda")
@@ -105,20 +99,41 @@ hist(draws_unaligned[, "Lambda[1,1]"],
 
 Instead of a clean, unimodal distribution centered around the true value of $0.7$ (their true simulated value), we have a bimodal shape caused by the sampler traversing different orthogonal rotations.
 
-### The rotated solution
+## The rotated solution
 
-We now pass our raw MCMC matrix to `rsp_align()`. However, because MCMC samplers generally output multidimensional parameters (like a loading matrix $\mathbf{\Lambda}$) as flat, one-dimensional vectors, it is crucial to understand **how** `rsp_align()` expects this data to be formatted.
+To align the results, we pass the raw MCMC matrix to rsp_align(). Since samplers flatten multidimensional parameters (like the loading matrix $\mathbf{\Lambda}$) into vectors, the function requires specific formatting:
 
-The function requires the following key arguments:
-
-1.  **`lambda_draws`**: A 2D numeric matrix of dimensions $S \times (J \times M)$, where $S$ is the total number of posterior draws, $J$ is the number of items, and $M$ is the number of factors. Every row in this matrix represents a single MCMC iteration containing the entire flattened loading matrix.
+1.  **`lambda_draws`**: A numeric matrix of $S \times (J \times M)$, where $S$ is the total number of draws, $J$ is the number of items, and $M$ is the number of factors.
 2.  **`n_chains`**: The number of MCMC chains. The function assumes the rows in `lambda_draws` are stacked chain by chain (e.g., if you have 4000 draws from 4 chains, rows 1-1000 belong to chain 1, rows 1001-2000 to chain 2, etc.).
-3.  **`format`**: This is the most critical argument. It tells the algorithm how your specific MCMC software (e.g., Stan, JAGS) flattened the original $J \times M$ matrix into a single row.
+3.  **`format`**: The most critical argument; it specifies how your MCMC software flattened the original $J \times M$ loading matrix into a single row.
 
-To correctly reconstruct the matrices internally, `rsp_align()` needs to know the flattening order. There are two options:
+### Understanding Flattening Formats
 
-* **`format = "column_major"`**: The matrix was flattened factor by factor (column by column). The row vector first contains all items for Factor 1, then all items for Factor 2, and so on. **This is the default behavior in Stan** and corresponds to R's standard `as.vector(Lambda)`.
-* **`format = "row_major"`**: The matrix was flattened item by item (row by row). The row vector first contains all factor loadings for Item 1, then all factor loadings for Item 2, etc. This corresponds to `as.vector(t(Lambda))` in `R`.
+The lambda_draws input must be a 2D matrix of dimensions $S \times (J \times M)$. Since MCMC samplers flatten the original $J \times M$ loading matrix $\mathbf{\Lambda}$ into a single row vector, the format argument tells the function how to reconstruct it.
+
+Consider a $4 \times 3$ loading matrix (4 items, 3 factors):
+$$
+\mathbf{\Lambda} = \begin{bmatrix}
+\lambda_{11} & \lambda_{12} & \lambda_{13} \\
+\lambda_{21} & \lambda_{22} & \lambda_{23} \\
+\lambda_{31} & \lambda_{32} & \lambda_{33} \\
+\lambda_{41} & \lambda_{42} & \lambda_{43}
+\end{bmatrix}
+$$
+
+Depending on your MCMC software, the input rows must follow one of these two structures:
+
+1. **Column-major** (`format = "column_major"`): Elements are filled **factor by factor**. This is the default output for `Stan` and matches the `as.vector(Lambda)` behavior in R:
+
+$$
+\text{vec}(\mathbf{\Lambda}) = [ \underbrace{\lambda_{11}, \lambda_{21}, \lambda_{31}, \lambda_{41}}_{\text{Factor 1}}, \, \underbrace{\lambda_{12}, \lambda_{22}, \lambda_{32}, \lambda_{42}}_{\text{Factor 2}}, \, \underbrace{\lambda_{13}, \lambda_{23}, \lambda_{33}, \lambda_{43}}_{\text{Factor 3}} ]
+$$
+
+2. **Row-major** (`format = "row_major"`): Elements are filled item by item. This corresponds to as.vector(t(Lambda)) in R:
+
+$$
+\text{vec}(\mathbf{\Lambda}^\top) = [ \underbrace{\lambda_{11}, \lambda_{12}, \lambda_{13}}_{\text{Item 1}}, \, \underbrace{\lambda_{21}, \lambda_{22}, \lambda_{23}}_{\text{Item 2}}, \, \underbrace{\lambda_{31}, \lambda_{32}, \lambda_{33}}_{\text{Item 3}}, \, \underbrace{\lambda_{41}, \lambda_{42}, \lambda_{43}}_{\text{Item 4}} ]
+$$
 
 We can easily visualize this difference by looking at the column names of our extracted draws. For an $6 \times 2$ loading matrix:
 
@@ -133,7 +148,9 @@ rw_ord <- rep(1:6, each = 2) + rep(c(0, 6), times = 2)
 colnames(draws_unaligned)[rw_ord]
 ```
 
-Now that we understand the requirements, we can safely apply the algorithm to our data. In our example, we have 6 items, 2 factors, 4 chains, and we confirmed our extraction tool outputs column-major vectors:
+### Resolving the Latent Structure
+
+Now that we have the correct format, we can apply the alignment algorithm. In this example (6 items, 2 factors, 4 chains), we use the `column_major` format to match our extraction tool:
 
 ```{r}
 # Apply the Efficient RSP algorithm
@@ -146,11 +163,11 @@ aligned_res <- rsp_align(
 )
 ```
 
-Once the posterior draws are properly aligned, the rotational indeterminacy is completely resolved, and the output becomes highly informative. By examining the aligned summaries, the true underlying structure of the data emerges clearly, fixing all the previous anomalies:
+By aligning the posterior draws, rotational indeterminacy is fully resolved. The previously observed anomalies disappear, and the true factor structure emerges with high precision and clarity:
 
-* **Clear factor structure (Meaningful means and medians):** Instead of canceling out to zero, the parameters now reveal a perfect simple structure. Items 1, 2, and 3 load heavily on Factor 1 (`Lambda[1:3, 1]` range from 0.66 to 0.80) while having near-zero cross-loadings on Factor 2. Conversely, items 4, 5, and 6 load strongly on Factor 2 (`Lambda[4:6, 2]` are all ~0.68) and virtually zero on Factor 1.
-* **High precision (Drastically reduced uncertainty):** The posterior standard deviations (`sd`) have plummeted from the massive ~0.50 range down to a very precise ~0.04. Consequently, the 90% credible intervals (`q5` to `q95`) are now narrow and informative, definitively excluding zero for the main loadings.
-* **Perfect convergence and mixing:** With the parameter space properly identified, the MCMC diagnostics are flawless. All $\hat{R}$ (`rhat`) values are now exactly 1.00, and the effective sample sizes (`ess_bulk` and `ess_tail`) have skyrocketed to extremely healthy levels (well over 2000), indicating that the chains are stable and mixing efficiently.
+* **Clear Factor Structure:** The previous "vanishing" means have been replaced by a perfect simple structure. Items 1–3 now load heavily on Factor 1 ($0.66 \le \lambda \le 0.80$) with near-zero cross-loadings, while items 4–6 load strongly on Factor 2 ($\approx 0.68$).
+* **High precision:** Posterior standard deviations have decreased significantly, from $\approx 0.50$ down to $0.04$, resulting in narrow, informative credible intervals that clearly exclude zero for all main loadings.
+* **Perfect convergence and mixing:** With the model now identified, MCMC diagnostics are perfect. All $\hat{R}$ values have stabilized at $1.00$, and effective sample sizes (ESS) have increased significantly (well over 2000), confirming efficient mixing and stable chains.
 
 ```{r}
 # Now, aligned posterior summaries are interpretable
