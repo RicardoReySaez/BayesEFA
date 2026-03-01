@@ -42,7 +42,7 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::rcmdcheck, stan-dev/cmdstanr
+          extra-packages: any::rcmdcheck, any::brms, stan-dev/cmdstanr
           needs: check
 
       - name: Install CmdStan

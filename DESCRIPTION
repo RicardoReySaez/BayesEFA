@@ -1,5 +1,5 @@
 Package: BayesEFA
-Title: BayesEFA: Bayesian Exploratory Factor Analysis Using 'Stan'
+Title: Bayesian Exploratory Factor Analysis Using 'Stan'
 Version: 0.1.0
 Authors@R: 
     person("Ricardo", "Rey-Sáez", , "ricardoreysaez95@gmail.com", role = c("aut", "cre", "cph"),
