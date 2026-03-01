@@ -326,10 +326,42 @@ repair_stanfit_names <- function(stanfit) {
   }
 
   sim <- stanfit@sim
+
+  # 1. Fix fnames_oi and sample column names (dot -> bracket notation)
   sim$fnames_oi <- dot_to_bracket(sim$fnames_oi)
   for (i in seq_along(sim$samples)) {
     names(sim$samples[[i]]) <- dot_to_bracket(names(sim$samples[[i]]))
   }
+
+  # 2. Recompute dims_oi from the corrected fnames_oi
+  #    brms::read_csv_as_stanfit may set dims_oi incorrectly (e.g., treating
+  #    matrix parameters as scalars) when CmdStan CSV uses dot notation
+  for (p in seq_along(sim$pars_oi)) {
+    par_name <- sim$pars_oi[p]
+    # Find all flat names matching this parameter (e.g., Lambda[1,1], Lambda[2,1], ...)
+    pattern <- paste0("^", par_name, "\\[")
+    matching <- grep(pattern, sim$fnames_oi, value = TRUE)
+
+    if (length(matching) > 0) {
+      # Parse indices from bracket notation to determine dimensions
+      # e.g., "Lambda[9,3]" -> max row = 9, max col = 3 -> dims = c(9, 3)
+      indices_str <- sub(paste0("^", par_name, "\\["), "", matching)
+      indices_str <- sub("\\]$", "", indices_str)
+      indices_list <- strsplit(indices_str, ",")
+
+      n_dims <- length(indices_list[[1]])
+      max_idx <- integer(n_dims)
+      for (idx in indices_list) {
+        nums <- as.integer(idx)
+        for (d in seq_len(n_dims)) {
+          max_idx[d] <- max(max_idx[d], nums[d])
+        }
+      }
+      sim$dims_oi[[p]] <- max_idx
+    }
+    # else: scalar parameter, keep dims_oi as integer(0)
+  }
+
   stanfit@sim <- sim
   stanfit
 }
