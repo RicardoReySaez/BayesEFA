@@ -22,7 +22,7 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
 Biarch: true
 Depends: 
-    R (>= 4.5.0)
+    R (>= 4.1.0)
 Imports: 
     rstan (>= 2.18.1),
     rstantools (>= 2.6.0),
