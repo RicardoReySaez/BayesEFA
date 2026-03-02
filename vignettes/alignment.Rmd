@@ -23,7 +23,6 @@ Let's begin by generating a dataset from a simple, two-dimensional latent struct
 ```{r echo = FALSE, message = FALSE}
 # Load BayesEFA
 library(BayesEFA)
-options(cmdstanr_warn_inits = FALSE)
 ```
 ```{r}
 # Load BayesEFA
@@ -61,7 +60,7 @@ fit_unaligned <- befa(
   compute_fit_indices = FALSE,
   compute_reliability = FALSE,
   rotate = "none",
-  backend = "cmdstanr",
+  backend = "rstan",
   seed = 123,
   refresh = 0,
   show_message = FALSE,

@@ -19,7 +19,7 @@ befa(
   rsp_args = NULL,
   loo_args = NULL,
   factor_scores = FALSE,
-  backend = c("cmdstanr", "rstan"),
+  backend = c("rstan", "cmdstanr"),
   prior = list(),
   compute_fit_indices = TRUE,
   compute_reliability = TRUE,

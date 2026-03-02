@@ -67,6 +67,10 @@ fit_befa_model <- function(model_name, stan_data, backend, verbose, model_type, 
         # Sampling from the model
         fit_cmd <- do.call(mod$sample, stan_args)
         # Make the output equivalent to rstan
+        if (!requireNamespace("brms", quietly = TRUE)) {
+          stop("Package 'brms' is required for the 'cmdstanr' backend. ",
+               "Install it with: install.packages('brms')", call. = FALSE)
+        }
         brms::read_csv_as_stanfit(fit_cmd$output_files())
 
         # Rstan branch: simple

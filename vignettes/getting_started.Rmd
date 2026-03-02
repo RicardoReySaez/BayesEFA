@@ -27,9 +27,7 @@ knitr::opts_chunk$set(
 - **FIML for Missing Data**: Handles incomplete datasets via Full Information Maximum Likelihood (FIML). 
 - **Inherent Robustness**: Naturally resolves common frequentist issues, such as Heywood cases and non-positive definite matrices, ensuring stable estimation.
 
-While the package supports both `rstan` and `cmdstanr`, the use of `cmdstanr` is highly recommended as it is the only backend that ensures compatibility with the latest version of `Stan` and typically offers faster estimation times. Please install `cmdstanr` by following the [official guide](https://mc-stan.org/cmdstanr/articles/cmdstanr.html).
-
-> **Note**: The first time you use the `cmdstanr` backend, the underlying Stan model will be compiled to C++. This one-time process may take a minute. However, the compiled executable is saved and reused for all subsequent analyses, so future model fitting will be immediate.
+While the package supports both `rstan` and `cmdstanr`, `rstan` is used as the default backend. For users who prefer the latest Stan features and faster estimation, `cmdstanr` can be installed by following the [official guide](https://mc-stan.org/cmdstanr/articles/cmdstanr.html).
 
 ## Basic example using BayesEFA
 
@@ -45,7 +43,7 @@ befa_fit <- befa(
   model = "cor",                   # Model the correlation matrix
   lambda_prior = "unit_vector",    # Unit-vector prior (Rey-Sáez et al., 2025)
   rotate = "varimax",              # Automatic Varimax + E-RSP Alignment
-  backend = "cmdstanr",            # Estimation backend, also "rstan"
+  backend = "rstan",               # Estimation backend, also "cmdstanr"
   factor_scores = TRUE,            # Compute Bayesian factor scores
   compute_fit_indices = TRUE,      # Compute Bayesian SEM fit indices
   compute_reliability = TRUE,      # Compute reliability indices
