@@ -18,6 +18,7 @@ Stan Development Team (2024). RStan: the R interface to Stan. R package. https:/
 \seealso{
 Useful links:
 \itemize{
+  \item \url{https://ricardoreysaez.github.io/BayesEFA/}
   \item \url{https://github.com/RicardoReySaez/BayesEFA}
   \item Report bugs at \url{https://github.com/RicardoReySaez/BayesEFA/issues}
 }

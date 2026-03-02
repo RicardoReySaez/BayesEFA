@@ -45,7 +45,7 @@ befa_fit <- befa(
   model = "cor",                   # Model the correlation matrix
   lambda_prior = "unit_vector",    # Unit-vector prior (Rey-Sáez et al., 2025)
   rotate = "varimax",              # Automatic Varimax + E-RSP Alignment
-  backend = "rstan",               # Estimation backend, also "cmdstanr"
+  backend = "cmdstanr",            # Estimation backend, also "rstan"
   factor_scores = TRUE,            # Compute Bayesian factor scores
   compute_fit_indices = TRUE,      # Compute Bayesian SEM fit indices
   compute_reliability = TRUE,      # Compute reliability indices

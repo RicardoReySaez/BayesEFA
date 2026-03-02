@@ -61,7 +61,7 @@ fit_unaligned <- befa(
   compute_fit_indices = FALSE,
   compute_reliability = FALSE,
   rotate = "none",
-  backend = "rstan",
+  backend = "cmdstanr",
   seed = 123,
   refresh = 0,
   show_message = FALSE,
