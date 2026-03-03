@@ -132,7 +132,8 @@ hist(draws_unaligned[, "Lambda[1,2]"],
 )
 ```
 
-![plot of chunk unnamed-chunk-6](figure/unnamed-chunk-6-1.png)
+![plot of chunk
+unnamed-chunk-6](figures/alignment-unnamed-chunk-6-1.png)
 
 plot of chunk unnamed-chunk-6
 
@@ -291,7 +292,8 @@ hist(draws_aligned[, "Lambda[1,2]"],
 )
 ```
 
-![plot of chunk unnamed-chunk-10](figure/unnamed-chunk-10-1.png)
+![plot of chunk
+unnamed-chunk-10](figures/alignment-unnamed-chunk-10-1.png)
 
 plot of chunk unnamed-chunk-10
 

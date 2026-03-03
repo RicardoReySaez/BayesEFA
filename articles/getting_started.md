@@ -164,7 +164,8 @@ hist(draws[, "Lambda[1,1]"],
 )
 ```
 
-![plot of chunk unnamed-chunk-2](figure/unnamed-chunk-2-1.png)
+![plot of chunk
+unnamed-chunk-2](figures/getting_started-unnamed-chunk-2-1.png)
 
 plot of chunk unnamed-chunk-2
 
