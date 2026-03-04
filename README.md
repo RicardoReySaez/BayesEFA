@@ -69,7 +69,7 @@ Here is a basic example showing how to fit a Bayesian EFA model:
 library(BayesEFA)
 
 # Fit a 3-factor Bayesian EFA model using the Holzinger & Swineford dataset
-fit <- befa(data = HS_data, n_factors = 3)
+befa_fit <- befa(data = HS_data, n_factors = 3)
 
 # Print a comprehensive summary of the model (inspired in psych package output)
 summary(befa_fit, cutoff = 0.3, signif_stars = TRUE)
