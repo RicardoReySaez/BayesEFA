@@ -295,4 +295,4 @@ hist(draws_aligned[, "Lambda[1,2]"],
 - Rey-Sáez, R. & Revuelta, J. (2026). *An Efficient
   Rotation-Sign-Permutation Algorithm to Solve Rotational Indeterminacy
   in Bayesian Exploratory Factor Analysis*. PsyArXiv.
-  <https://osf.io/5dutv/>
+  <https://doi.org/10.31234/osf.io/6drsw_v1>

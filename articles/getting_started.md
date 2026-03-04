@@ -47,20 +47,20 @@ library(BayesEFA)
 
 # Fit Bayesian EFA model
 befa_fit <- befa(
-  data = HS_data,                     # Data
-  n_factors = 3,                      # Nº of latent factors
-  model = "cor",                      # Model the correlation matrix
-  lambda_prior = "unit_vector",       # Unit-vector prior (Rey-Sáez et al., 2025)
-  rotate = "varimax",                 # Automatic Varimax + E-RSP Alignment
-  backend = "rstan",                  # Estimation backend, also "cmdstanr"
-  factor_scores = TRUE,               # Compute Bayesian factor scores
-  compute_fit_indices = TRUE,         # Compute Bayesian SEM fit indices
-  compute_reliability = TRUE,         # Compute reliability indices
-  iter_sampling = 1000,               # Sampling iterations
-  iter_warmup = 1000,                 # Warmup iterations
-  chains = 4,                         # 4 MCMC chains
-  parallel_chains = 1,                # no parallel chains
-  seed = 17                           # seed for reproducible results
+  data = HS_data,                  # Data
+  n_factors = 3,                   # Nº of latent factors
+  model = "cor",                   # Model the correlation matrix
+  lambda_prior = "unit_vector",    # Unit-vector prior (Rey-Sáez et al., 2025)
+  rotate = "varimax",              # Automatic Varimax + E-RSP Alignment
+  backend = "rstan",               # Estimation backend, also "cmdstanr"
+  factor_scores = TRUE,            # Compute Bayesian factor scores
+  compute_fit_indices = TRUE,      # Compute Bayesian SEM fit indices
+  compute_reliability = TRUE,      # Compute reliability indices
+  iter_sampling = 1000,            # Sampling iterations
+  iter_warmup = 1000,              # Warmup iterations
+  chains = 4,                      # 4 MCMC chains
+  parallel_chains = 1,             # no parallel chains
+  seed = 17                        # seed for reproducible results
 )
 ```
 
@@ -202,4 +202,4 @@ posterior_summaries(befa_fit, pars = "h2")
 - Rey-Sáez, R. & Revuelta, J. (2026). *An Efficient
   Rotation-Sign-Permutation Algorithm to Solve Rotational Indeterminacy
   in Bayesian Exploratory Factor Analysis*. PsyArXiv.
-  <https://osf.io/5dutv/>
+  <https://doi.org/10.31234/osf.io/6drsw_v1>
