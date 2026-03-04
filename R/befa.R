@@ -194,6 +194,11 @@
 #' *A Unified Framework for Psychometrics in Experimental Psychology: The Standardized
 #' Generalized Hierarchical Factor Model*. PsyArXiv. <https://doi.org/10.31234/osf.io/gv6k7_v1>
 #'
+#' Rey-Sáez, R. & Revuelta, J. (2026). *An Efficient
+#' Rotation-Sign-Permutation Algorithm to Solve Rotational Indeterminacy in
+#' Bayesian Exploratory Factor Analysis*. PsyArXiv.
+#' <https://doi.org/10.31234/osf.io/6drsw_v1>
+#'
 #' @examples
 #' \dontrun{
 #' # Fit Bayesian EFA model to the famous Grant-White School Data (Holzinger & Swineford, 1939)

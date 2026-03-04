@@ -195,4 +195,4 @@ hist(draws_aligned[, "Lambda[1,2]"],
 ## References
 
 - Papastamoulis, P., & Ntzoufras, I. (2022). On the identifiability of Bayesian factor analytic models. *Statistics and Computing, 32*(2), 23. <https://doi.org/10.1007/s11222-022-10084-4>
-- Rey-Sáez, R. & Revuelta, J. (2026). *An Efficient Rotation-Sign-Permutation Algorithm to Solve Rotational Indeterminacy in Bayesian Exploratory Factor Analysis*. PsyArXiv. <https://osf.io/5dutv/>
+- Rey-Sáez, R. & Revuelta, J. (2026). *An Efficient Rotation-Sign-Permutation Algorithm to Solve Rotational Indeterminacy in Bayesian Exploratory Factor Analysis*. PsyArXiv. <https://doi.org/10.31234/osf.io/6drsw_v1>
